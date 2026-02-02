@@ -38,38 +38,43 @@ p {
   margin: 60px 0 30px;
 }
 
-/* Buttons wrapper */
+/* Buttons layout */
 .buttons {
   position: relative;
-  height: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  height: 90px;
+  margin: 0 auto;
 }
 
-/* Buttons */
+/* YES button */
+#yes {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ff4d6d;
+  color: white;
+}
+
+/* NO button */
+#no {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #e0e0e0;
+  z-index: 2;
+}
+
+/* Button base */
 button {
   padding: 16px 34px;
   font-size: 20px;
   border-radius: 40px;
   border: none;
   cursor: pointer;
-  transition: left 0.15s ease, top 0.15s ease;
-}
-
-#yes {
-  background: #ff4d6d;
-  color: white;
-  z-index: 1;
-}
-
-#no {
-  background: #e0e0e0;
-  position: absolute;
-  left: calc(50% + 140px); /* clearly to the right of YES */
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 3; /* ALWAYS above YES */
+  transition: left 0.2s ease, top 0.2s ease;
 }
 
 /* Celebration screen */
@@ -131,23 +136,23 @@ canvas {
 
   <p>I have never really done this before.  
   I have never celebrated Valentine’s,  
-  so I’m not even sure how this is supposed to be done lol.</p>
+  so I am not even sure how this is supposed to be done lol.</p>
 
   <p>And I know there must already be too many options,  
-  too many things to think about —  
+  too many things to think about  
   which probably makes deciding even more confusing.</p>
 
   <p>I also realise that asking you this  
   might complicate things further for you.</p>
 
-  <p>But I knew one thing for sure —  
+  <p>But I knew one thing for sure  
   I couldn’t ignore what I felt.</p>
 
   <p>This isn’t loud or flashy.  
-  It’s just honest —  
+  It’s just honest 
   and it’s meant for you.</p>
 
-  <p>So I thought I wouldd ask,  
+  <p>So I thought I would ask,  
   the only way I know how 😅</p>
 
   <p class="question">Will you be my Valentine? 🌹</p>
@@ -174,22 +179,17 @@ const funnyTexts = [
   "Don’t be that rude 🙈",
   "Wrong button 😆",
   "Nice try 😜",
-  "Nope nope 😅"
+  "Hehe nope 😅"
 ];
 
-/* Runaway NO (safe zone, never overlaps YES) */
+/* Runaway NO – stays visible, never overlaps YES */
 function moveNo() {
   const parent = document.querySelector(".buttons");
   const maxX = parent.offsetWidth - noBtn.offsetWidth;
   const maxY = parent.offsetHeight - noBtn.offsetHeight;
 
-  let x = Math.random() * maxX;
-  let y = Math.random() * maxY;
-
-  /* Keep NO away from center (YES zone) */
-  if (x < parent.offsetWidth / 2) {
-    x += parent.offsetWidth / 3;
-  }
+  const x = Math.random() * (maxX / 2) + (maxX / 2);
+  const y = Math.random() * maxY;
 
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
@@ -253,7 +253,7 @@ function startFireworks() {
     p.forEach(o => {
       ctx.beginPath();
       ctx.arc(o.x,o.y,3,0,Math.PI*2);
-      ctx.fillStyle = `hsl(${Math.random()*360},100%,60%)`;
+      ctx.fillStyle=`hsl(${Math.random()*360},100%,60%)`;
       ctx.fill();
       o.x += o.vx;
       o.y += o.vy;
