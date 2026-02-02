@@ -8,24 +8,22 @@
 body {
   margin: 0;
   font-family: 'Georgia', serif;
-  background: #fff7f9;
-  height: 100vh;
-  overflow: hidden;
+  background: linear-gradient(to bottom, #fff5f7, #ffeef2);
+  min-height: 100vh;
 }
 
+/* Main content */
 .container {
-  height: 100vh;
-  overflow-y: auto;
-  padding: 40px 20px 120px;
-  max-width: 600px;
+  max-width: 650px;
   margin: auto;
+  padding: 40px 20px 220px; /* extra bottom space for buttons */
 }
 
 p {
   font-size: 18px;
-  line-height: 1.7;
+  line-height: 1.8;
   color: #333;
-  margin-bottom: 22px;
+  margin-bottom: 24px;
 }
 
 .hello {
@@ -34,23 +32,26 @@ p {
 }
 
 .question {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
-  margin-top: 40px;
+  margin-top: 60px;
+  margin-bottom: 40px;
 }
 
+/* Buttons */
 .buttons {
   position: fixed;
-  bottom: 30px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 10;
 }
 
 button {
-  padding: 12px 26px;
+  padding: 14px 30px;
   font-size: 18px;
-  border-radius: 30px;
+  border-radius: 40px;
   border: none;
   cursor: pointer;
 }
@@ -63,14 +64,34 @@ button {
 #no {
   background: #ddd;
   position: absolute;
-  left: 120px;
+  left: 140px;
 }
 
+/* Fireworks */
 canvas {
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
+}
+
+/* Floating hearts */
+.heart {
+  position: fixed;
+  bottom: -20px;
+  font-size: 20px;
+  animation: floatUp 6s linear forwards;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
 }
 </style>
 </head>
@@ -118,55 +139,92 @@ canvas {
   <button id="no">NO 🙈</button>
 </div>
 
+<audio id="music" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
 <canvas id="fireworks"></canvas>
 
 <script>
 const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const music = document.getElementById("music");
+
+const noTexts = [
+  "NO 🙈",
+  "Are you sure? 😅",
+  "Think again 😌",
+  "Don’t do this 😭",
+  "Okay okay… stop chasing me 😆"
+];
+
 noBtn.addEventListener("mouseover", () => {
-  noBtn.style.left = Math.random() * 200 - 100 + "px";
-  noBtn.style.top = Math.random() * 80 - 40 + "px";
+  noBtn.style.left = Math.random() * 240 - 120 + "px";
+  noBtn.style.top = Math.random() * 120 - 60 + "px";
+  noBtn.textContent = noTexts[Math.floor(Math.random() * noTexts.length)];
 });
 
-const yesBtn = document.getElementById("yes");
+/* Fireworks setup */
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 yesBtn.onclick = () => {
+  music.play();
+
   document.getElementById("content").innerHTML = `
-    <p class="question">You just made me smile like an idiot 🥹❤️</p>
-    <p style="text-align:center;">See you on Valentine’s 🌹</p>
+    <p class="question">You just made my entire day 🥹❤️</p>
+    <p style="text-align:center;">
+      I promise warmth, smiles,<br>
+      and at least one really good meal 🌹
+    </p>
   `;
+
   startFireworks();
+  startHearts();
 };
+
+function startHearts() {
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.textContent = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 6000);
+  }, 400);
+}
 
 function startFireworks() {
   let particles = [];
-  for (let i = 0; i < 120; i++) {
+
+  for (let i = 0; i < 150; i++) {
     particles.push({
       x: canvas.width / 2,
       y: canvas.height / 2,
-      vx: (Math.random() - 0.5) * 8,
-      vy: (Math.random() - 0.5) * 8,
-      life: 100
+      vx: (Math.random() - 0.5) * 9,
+      vy: (Math.random() - 0.5) * 9,
+      life: 120
     });
   }
 
   function animate() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     particles.forEach(p => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = `hsl(${Math.random()*360},100%,60%)`;
+      ctx.fillStyle = `hsl(${Math.random() * 360},100%,60%)`;
       ctx.fill();
       p.x += p.vx;
       p.y += p.vy;
       p.life--;
     });
+
     particles = particles.filter(p => p.life > 0);
     if (particles.length) requestAnimationFrame(animate);
   }
+
   animate();
 }
 </script>
