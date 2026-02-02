@@ -38,16 +38,16 @@ p {
   margin: 60px 0 30px;
 }
 
-/* Buttons */
+/* Buttons wrapper */
 .buttons {
   position: relative;
-  height: 90px;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
 }
 
+/* Buttons */
 button {
   padding: 16px 34px;
   font-size: 20px;
@@ -60,18 +60,19 @@ button {
 #yes {
   background: #ff4d6d;
   color: white;
-  z-index: 2;
+  z-index: 1;
 }
 
 #no {
   background: #e0e0e0;
   position: absolute;
-  left: 55%;
+  left: calc(50% + 140px); /* clearly to the right of YES */
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
+  z-index: 3; /* ALWAYS above YES */
 }
 
-/* Celebration */
+/* Celebration screen */
 .center-screen {
   min-height: 100vh;
   display: flex;
@@ -104,7 +105,7 @@ canvas {
   }
 }
 
-/* Mobile */
+/* Mobile tweaks */
 @media (max-width: 480px) {
   button {
     font-size: 18px;
@@ -119,32 +120,34 @@ canvas {
 <div class="container" id="content">
   <p class="hello">Hey Sej,</p>
 
-  <p>You have probably met a few men off late,  
-  and I am guessing most of them must have asked you out by now.</p>
+  <p>You’ve probably met way too many men off late,  
+  and I’m guessing most of them must have asked you out by now.</p>
 
   <p>Plans would already be in place,  
   conversations happening,  
   options stacking up.</p>
 
-  <p>I have never really done this before.  
-  I have never celebrated Valentine’s,  
-  so I am not even sure how this is supposed to be done lol.</p>
+  <p>Honestly, that sounds like a lot 😅</p>
+
+  <p>I’ve never really done this before.  
+  I’ve never celebrated Valentine’s,  
+  so I’m not even sure how this is supposed to be done lol.</p>
 
   <p>And I know there must already be too many options,  
-  too many things to think about  
+  too many things to think about —  
   which probably makes deciding even more confusing.</p>
 
   <p>I also realise that asking you this  
   might complicate things further for you.</p>
 
-  <p>But I knew one thing for sure  
+  <p>But I knew one thing for sure —  
   I couldn’t ignore what I felt.</p>
 
   <p>This isn’t loud or flashy.  
-  It’s just honest
+  It’s just honest —  
   and it’s meant for you.</p>
 
-  <p>So I thought I wouldd ask,  
+  <p>So I thought I’d ask,  
   the only way I know how 😅</p>
 
   <p class="question">Will you be my Valentine? 🌹</p>
@@ -169,18 +172,24 @@ const music = document.getElementById("music");
 const funnyTexts = [
   "Think again 😌",
   "Don’t be that rude 🙈",
-  "Nope? Really? 😅",
   "Wrong button 😆",
-  "Nice try 😜"
+  "Nice try 😜",
+  "Nope nope 😅"
 ];
 
+/* Runaway NO (safe zone, never overlaps YES) */
 function moveNo() {
   const parent = document.querySelector(".buttons");
   const maxX = parent.offsetWidth - noBtn.offsetWidth;
   const maxY = parent.offsetHeight - noBtn.offsetHeight;
 
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
+  let x = Math.random() * maxX;
+  let y = Math.random() * maxY;
+
+  /* Keep NO away from center (YES zone) */
+  if (x < parent.offsetWidth / 2) {
+    x += parent.offsetWidth / 3;
+  }
 
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
@@ -190,7 +199,7 @@ function moveNo() {
 noBtn.addEventListener("mouseenter", moveNo);
 noBtn.addEventListener("touchstart", moveNo);
 
-/* Fireworks setup */
+/* Fireworks */
 const canvas = document.getElementById("fireworks");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
